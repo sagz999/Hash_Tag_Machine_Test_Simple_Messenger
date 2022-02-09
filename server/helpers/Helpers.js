@@ -50,11 +50,44 @@ module.exports = {
   },
 
   fetchCompleteUsers: () => {
-    return new Promise( (resolve, reject) => {
-      db.get().collection(COLLECTION.USER_COLLECTION).find().toArray().then((users) => {
-         resolve(users);
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(COLLECTION.USER_COLLECTION)
+        .find()
+        .toArray()
+        .then((users) => {
+          resolve(users);
+        });
+    });
+  },
+
+  storeMessage: (messageData) => {
+    return new Promise((resolve, reject) => {
+      messageData.forwards = [];
+      db.get()
+        .collection(COLLECTION.MESSAGE_COLLECTION)
+        .insertOne(messageData)
+        .then(() => {
+          resolve();
+        })
+        .catch(() => {
+          reject();
+        });
+    });
+  },
+
+  fetchAllUserMessages: (userEmail) => {
+    return new Promise((resolve, reject) => {
+      console.log(userEmail);
+      db.get().collection(COLLECTION.MESSAGE_COLLECTION).find({$or:[{ recipient: userEmail },{forwards:userEmail}]}).toArray().then((messages) => {
+        if (messages.length != 0) {
+          resolve(messages);
+        } else {
+          reject();
+        };
       })
      
+      
     })
   }
 };
