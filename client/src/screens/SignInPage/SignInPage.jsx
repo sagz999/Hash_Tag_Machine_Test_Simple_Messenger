@@ -18,22 +18,28 @@ export default function SignInPage() {
   const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
 
+  //custom alert to display error messages
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={2} ref={ref} variant="filled" {...props} />;
   });
 
+
+  //react-hooks-form validation config
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  //setting header for REST Api
   const config = {
     headers: {
       "Content-type": "application/json",
     },
   };
 
+
+  //Api call for signing in
   const SignIn = async (formData) => {
     try {
       setLoading(true);

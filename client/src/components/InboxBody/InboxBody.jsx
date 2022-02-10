@@ -4,15 +4,18 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
 import axios from "axios";
+import * as React from "react";
 import { useForm } from "react-hook-form";
+
+// setting headers for REST Api calls
 const config = {
   headers: {
     "Content-type": "application/json",
   },
 };
 
+//custom styling for modal
 const style = {
   position: "absolute",
   top: "50%",
@@ -32,6 +35,7 @@ const InboxBody = () => {
   const [messages, setMessages] = React.useState([]);
   const [users, setUsers] = React.useState([]);
 
+  //Api request to fetch all messages of the user
   const fetchUserMessages = async () => {
     const email = await JSON.parse(localStorage.getItem("userData")).email;
     axios
@@ -44,6 +48,7 @@ const InboxBody = () => {
       });
   };
 
+  //Api request to fetchall Users
   const fetchAllUsers = async () => {
     const email = await JSON.parse(localStorage.getItem("userData")).email;
     axios
@@ -55,6 +60,8 @@ const InboxBody = () => {
         console.log("Error", error.response.data.message);
       });
   };
+
+  //Api request to forward message
 
   const forwardMessage = async ({ recipient }, messageId) => {
     const email = await JSON.parse(localStorage.getItem("userData")).email;
@@ -73,11 +80,14 @@ const InboxBody = () => {
       });
   };
 
+
+  // functions to be called on each mounting
   React.useEffect(() => {
     fetchUserMessages();
     fetchAllUsers();
   }, []);
 
+  //Accordion open/Close handler
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
@@ -86,6 +96,7 @@ const InboxBody = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  //react-hooks-form validation
   const {
     register,
     handleSubmit,

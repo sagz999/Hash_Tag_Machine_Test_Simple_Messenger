@@ -1,16 +1,17 @@
 
-import NavBar from "../../components/NavBar/NavBar";
-import * as React from "react";
-import PropTypes from "prop-types";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import ComposeMessage from "../../components/ComposeMessage/ComposeMessage";
 import { Container } from "@mui/material";
+import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import Typography from "@mui/material/Typography";
+import PropTypes from "prop-types";
+import * as React from "react";
+import ComposeMessage from "../../components/ComposeMessage/ComposeMessage";
 import InboxBody from "../../components/InboxBody/InboxBody";
+import NavBar from "../../components/NavBar/NavBar";
 import SendBody from "../../components/SentBody/SentBody";
 
+// material-UI_tabs functionalities
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -68,7 +69,7 @@ function HomePage() {
         </Box>
         <TabPanel value={value} index={0}>
           <Container maxWidth="lg">
-            <InboxBody />
+            <InboxBody /> 
           </Container>
         </TabPanel>
         <TabPanel value={value} index={1}>

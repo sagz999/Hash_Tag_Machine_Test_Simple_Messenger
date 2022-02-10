@@ -3,6 +3,7 @@ const Helpers= require('../helpers/Helpers')
 
 module.exports = {
 
+  //controller to add a new user
   addUser: (req, res) => {
     Helpers.addNewUser(req.body)
       .then(() => {
@@ -13,6 +14,7 @@ module.exports = {
       });
   },
 
+  //controller for user authentication
   userLogin: (req, res) => {
     Helpers.login(req.body)
       .then((user) => {
@@ -27,6 +29,8 @@ module.exports = {
       });
   },
 
+
+  //controller to fetch all users excluding the active user
   fetchAllUsers: (req, res) => {
     Helpers.fetchCompleteUsers(req.query.email).then((users) => {
       res.status(200).json(users);
@@ -35,6 +39,8 @@ module.exports = {
     });
   },
 
+
+  //controller to send message
   sendMessage: (req, res) => {
     Helpers.storeMessage(req.body).then(() => {
       res.status(200).json({message:"Message send successfully"})
@@ -43,6 +49,8 @@ module.exports = {
     })
    },
   
+
+  //controller to fetch all messages of user
   fetchUserMessages: (req, res) => {
     
     Helpers.fetchAllUserIncomingMessages(req.query.email)
@@ -55,6 +63,7 @@ module.exports = {
       });
   },
   
+  //controller to fetch all send messages of user
   fetchSendMessages: (req, res) => {
     
     Helpers.fetchAllUserOutgoingMessages(req.query.email)
@@ -67,6 +76,7 @@ module.exports = {
       });
    },
   
+  //controller to forward message
   forwardMessage: (req, res) => { 
     
     Helpers.updateMesssage(req.query.messageId, req.body).then(() => {

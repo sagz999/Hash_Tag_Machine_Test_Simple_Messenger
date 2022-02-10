@@ -4,9 +4,10 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
 import axios from "axios";
+import * as React from "react";
 import { useForm } from "react-hook-form";
+
 const config = {
   headers: {
     "Content-type": "application/json",
@@ -26,11 +27,16 @@ const style = {
 };
 
 
-
 const SentBody = () => {
   const [expanded, setExpanded] = React.useState(false);
   const [messages, setMessages] = React.useState([]);
   const [users, setUsers] = React.useState([]);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+
+  //Api request to fetch all messages send by user
 
   const fetchUserMessages = async () => {
     const email = await JSON.parse(localStorage.getItem("userData")).email;
@@ -44,6 +50,9 @@ const SentBody = () => {
       });
   };
 
+
+  // Api request to fetch all the users 
+
   const fetchAllUsers = async () => {
     const email = await JSON.parse(localStorage.getItem("userData")).email;
     axios
@@ -55,6 +64,9 @@ const SentBody = () => {
         console.log("Error", error.response.data.message);
       });
   };
+
+
+  //Api request to forward a perticular message
 
   const forwardMessage = async ({ recipient }, messageId) => {
     const email = await JSON.parse(localStorage.getItem("userData")).email;
@@ -73,19 +85,21 @@ const SentBody = () => {
       });
   };
 
+  // functions to be called on each mounting
+
   React.useEffect(() => {
     fetchUserMessages();
     fetchAllUsers();
   }, []);
 
+  //Accordion open/close handler
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
 
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
+
+  //react-hook-form validation setup
   const {
     register,
     handleSubmit,

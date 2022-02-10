@@ -1,7 +1,9 @@
 import { Box, Button, Container, MenuItem, TextField } from "@mui/material";
-import React, { useEffect } from "react";
 import axios from "axios";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+
+// setting headers for REST Api calls
  const config = {
    headers: {
      "Content-type": "application/json",
@@ -11,6 +13,7 @@ import { useForm } from "react-hook-form";
 function ComposeMessage() {
   const [users, setUsers] = React.useState([]);
 
+  //Api call to fetch all users
   const fetchAllUsers = async () => {
     const email = await JSON.parse(localStorage.getItem("userData")).email;
     axios
@@ -23,6 +26,7 @@ function ComposeMessage() {
       });
   };
 
+  //Api call to send message
   const sendMessage = async (messageData) => {
 
     messageData.sender = await JSON.parse(localStorage.getItem("userData")).email;
@@ -34,6 +38,7 @@ function ComposeMessage() {
     })
   };
 
+//react-hooks-form Validation
   const {
     register,
     handleSubmit,
