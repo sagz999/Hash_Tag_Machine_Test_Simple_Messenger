@@ -42,7 +42,7 @@ export default function SignInPage() {
       const { data } = await axios.post("/user/login", formData, config);
       localStorage.setItem("userData", JSON.stringify(data));
       setLoading(false);
-      navigate("/inbox");
+      navigate("/home");
     } catch (error) {
       setLoading(false);
       setError(error.response.data.message);

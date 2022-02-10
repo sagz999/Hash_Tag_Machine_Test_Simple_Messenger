@@ -30,6 +30,8 @@ module.exports = {
   fetchAllUsers: (req, res) => {
     Helpers.fetchCompleteUsers(req.query.email).then((users) => {
       res.status(200).json(users);
+    }).catch(() => {
+      res.status(500).json({message:"Database down"})
     });
   },
 
@@ -43,12 +45,26 @@ module.exports = {
   
   fetchUserMessages: (req, res) => {
     
-    Helpers.fetchAllUserMessages(req.query.email).then((messages) => {
-      console.log(messages)
-      res.status(200).json(messages)
-    }).catch(() => {
-      res.status(404).json({message:"No messages found"})
-    })
+    Helpers.fetchAllUserIncomingMessages(req.query.email)
+      .then((messages) => {
+        
+        res.status(200).json(messages);
+      })
+      .catch(() => {
+        res.status(404).json({ message: "No messages found" });
+      });
+  },
+  
+  fetchSendMessages: (req, res) => {
+    
+    Helpers.fetchAllUserOutgoingMessages(req.query.email)
+      .then((messages) => {
+        
+        res.status(200).json(messages);
+      })
+      .catch(() => {
+        res.status(404).json({ message: "No messages found" });
+      });
    },
   
   forwardMessage: (req, res) => { 
@@ -56,7 +72,7 @@ module.exports = {
     Helpers.updateMesssage(req.query.messageId, req.body).then(() => {
       res.status(200).json({message:"Message Forwarded"})
     }).catch(() => {
-      res.status(400).json({message:"Database down"})
+      res.status(500).json({message:"Database down"})
     });
   },
   

@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ComposeMessagePage from "./screens/ComposeMessagePage/ComposeMessagePage";
-import InboxPage from "./screens/InboxPage/InboxPage";
+import HomePage from "./screens/HomePage/HomePage";
 import SignInPage from "./screens/SignInPage/SignInPage";
 
 
@@ -10,8 +9,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<SignInPage />} />
-        <Route path="/inbox" element={<InboxPage />} />
-        <Route path="/compose" element={<ComposeMessagePage />} />
+        <Route path="/home" element={<HomePage />} />
       </Routes>
     </BrowserRouter>
   );

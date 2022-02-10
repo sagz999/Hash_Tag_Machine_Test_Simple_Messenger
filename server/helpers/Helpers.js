@@ -56,6 +56,8 @@ module.exports = {
         .toArray()
         .then((users) => {
           resolve(users);
+        }).catch(() => {
+          reject();
         });
     });
   },
@@ -77,34 +79,8 @@ module.exports = {
     });
   },
 
-  // fetchAllUserMessages: (userEmail) => {
-  //   return new Promise((resolve, reject) => {
-
-  //     db.get()
-  //       .collection(COLLECTION.MESSAGE_COLLECTION)
-  //       .find({
-  //         $or: [
-  //           { recipient: userEmail },
-  //           { forwards: { $elemMatch: { forwardedTo:userEmail} } },
-  //         ],
-  //       })
-  //       .toArray()
-  //       .then((messages) => {
-
-  //         if (messages.length != 0) {
-  //           resolve(messages.reverse());
-  //         } else {
-  //           reject();
-  //         }
-  //       });
-  //   });
-  // },
-
-  fetchAllUserMessages: (userEmail) => {
+  fetchAllUserIncomingMessages: (userEmail) => {
     return new Promise(async (resolve, reject) => {
-     
-      // let directMessage = await db.get().collection(COLLECTION.MESSAGE_COLLECTION).find({ recipient: userEmail });
-     
       let directMessage = await db
         .get()
         .collection(COLLECTION.MESSAGE_COLLECTION)
@@ -120,12 +96,11 @@ module.exports = {
               message: 1,
               sender: 1,
               sendDate: 1,
-              sendTime: 1
+              sendTime: 1,
             },
-          }
+          },
         ])
         .toArray();
-
 
       let forwardedMessage = await db
         .get()
@@ -153,27 +128,83 @@ module.exports = {
             },
           },
           {
-            $unwind: '$forwards'
-          }
+            $unwind: "$forwards",
+          },
         ])
         .toArray();
 
-      console.log("forwardedMessage", forwardedMessage);
-      console.log("directMessage", directMessage);
       let messages = forwardedMessage.concat(directMessage);
-      console.log("messages", messages);
 
       if (messages.length != 0) {
-
         resolve(messages);
-
       } else {
-
         reject();
-
       }
-      
     });
+  },
+
+  fetchAllUserOutgoingMessages: (userEmail) => {
+     return new Promise(async (resolve, reject) => {
+       let directMessage = await db
+         .get()
+         .collection(COLLECTION.MESSAGE_COLLECTION)
+         .aggregate([
+           {
+             $match: { sender: userEmail },
+           },
+           {
+             $project: {
+               _id: 1,
+               recipient: 1,
+               subject: 1,
+               message: 1,
+               sender: 1,
+               sendDate: 1,
+               sendTime: 1,
+             },
+           },
+         ])
+         .toArray();
+
+       let forwardedMessage = await db
+         .get()
+         .collection(COLLECTION.MESSAGE_COLLECTION)
+         .aggregate([
+           {
+             $match: { forwards: { $elemMatch: { forwardedBy: userEmail } } },
+           },
+           {
+             $project: {
+               _id: 1,
+               recipient: 1,
+               subject: 1,
+               message: 1,
+               sender: 1,
+               sendDate: 1,
+               sendTime: 1,
+               forwards: {
+                 $filter: {
+                   input: "$forwards",
+                   as: "forward",
+                   cond: { $eq: ["$$forward.forwardedBy", userEmail] },
+                 },
+               },
+             },
+           },
+           {
+             $unwind: "$forwards",
+           },
+         ])
+         .toArray();
+
+       let messages = forwardedMessage.concat(directMessage);
+
+       if (messages.length != 0) {
+         resolve(messages);
+       } else {
+         reject();
+       }
+     });
   },
 
   updateMesssage: (messageId, forwardData) => {

@@ -27,7 +27,7 @@ const style = {
 
 
 
-const MessageTile = () => {
+const SentBody = () => {
   const [expanded, setExpanded] = React.useState(false);
   const [messages, setMessages] = React.useState([]);
   const [users, setUsers] = React.useState([]);
@@ -35,7 +35,7 @@ const MessageTile = () => {
   const fetchUserMessages = async () => {
     const email = await JSON.parse(localStorage.getItem("userData")).email;
     axios
-      .get(`/user/fetchMessages?email=${email}`, config)
+      .get(`/user/fetchSendMessages?email=${email}`, config)
       .then(({ data }) => {
         setMessages(data);
       })
@@ -56,6 +56,22 @@ const MessageTile = () => {
       });
   };
 
+  const forwardMessage = async ({ recipient }, messageId) => {
+    const email = await JSON.parse(localStorage.getItem("userData")).email;
+    const forward = {
+      forwardedBy: email,
+      forwardedTo: recipient,
+    };
+    console.log(forward);
+    axios
+      .patch(`user/forwardMessage?messageId=${messageId}`, forward, config)
+      .then(({ data }) => {
+        console.log(data.message);
+      })
+      .catch((err) => {
+        console.log(err.response.data.message);
+      });
+  };
 
   React.useEffect(() => {
     fetchUserMessages();
@@ -70,26 +86,13 @@ const MessageTile = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-   const {
-     register,
-     handleSubmit,
-     formState: { errors },
-   } = useForm();
-  
-  const forwardMessage = async ({ recipient }, messageId) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-    const email = await JSON.parse(localStorage.getItem("userData")).email;
-    const forward = {
-      forwardedBy: email,
-      forwardedTo: recipient,
-    }
-    console.log(forward);
-    axios.patch(`user/forwardMessage?messageId=${messageId}`,forward,config).then(({data}) => {
-      console.log(data.message);
-    }).catch((err) => {
-      console.log(err.response.data.message)
-    })
-  }
+  
 
   return (
     <Box sx={{ marginTop: "25px" }}>
@@ -106,21 +109,35 @@ const MessageTile = () => {
               aria-controls="panel1bh-content"
               id="panel1bh-header"
             >
-              <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                <strong>From:</strong> {message.sender}
-                <br />
-                <p style={{ color: "rgba(0, 0, 0, 0.6)" }}>
-                  <strong>On:</strong>
-                  {message.sendDate}
+              {message.forwards ? (
+                <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                  <strong>Send by:</strong> {message.sender}
                   <br />
-                  <strong>At:</strong>
-                  {message.sendTime}
-                </p>
-              </Typography>
+                  <p style={{ color: "rgba(0, 0, 0, 0.6)" }}>
+                    <strong>On:</strong>
+                    {message.sendDate}
+                    <br />
+                    <strong>At:</strong>
+                    {message.sendTime}
+                  </p>
+                </Typography>
+              ) : (
+                <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                  <strong>To:</strong> {message.recipient}
+                  <br />
+                  <p style={{ color: "rgba(0, 0, 0, 0.6)" }}>
+                    <strong>On:</strong>
+                    {message.sendDate}
+                    <br />
+                    <strong>At:</strong>
+                    {message.sendTime}
+                  </p>
+                </Typography>
+              )}
 
               {message.forwards && (
                 <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                  <strong>Forwarded by:</strong> {message.forwards.forwardedBy}
+                  <strong>Forwarded To:</strong> {message.forwards.forwardedTo}
                   <br />
                   <p style={{ color: "rgba(0, 0, 0, 0.6)" }}>
                     <strong>On:</strong>
@@ -214,4 +231,4 @@ const MessageTile = () => {
   );
 };
 
-export default MessageTile;
+export default SentBody;
