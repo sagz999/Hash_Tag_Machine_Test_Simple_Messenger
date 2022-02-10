@@ -11,9 +11,10 @@ import { useForm } from "react-hook-form";
 function ComposeMessage() {
   const [users, setUsers] = React.useState([]);
 
-  const fetchAllUsers = () => {
+  const fetchAllUsers = async () => {
+    const email = await JSON.parse(localStorage.getItem("userData")).email;
     axios
-      .get("/user/fetchAllUsers")
+      .get(`/user/fetchAllUsers?email=${email}`)
       .then(({ data }) => {
         setUsers(data);
       })
@@ -63,6 +64,7 @@ function ComposeMessage() {
           name="recipient"
           select
           label="Recipient"
+          required
           {...register("recipient", {
             required: "Choose a recipient",
           })}
@@ -77,11 +79,30 @@ function ComposeMessage() {
         </TextField>
         <br />
         <TextField
+          name="subject"
+          id="subject"
+          label="Subject"
+          variant="outlined"
+          fullWidth
+          required
+          {...register("subject", {
+            required: "This field can't be empty",
+            minLength: {
+              value: 5,
+              message: "Minimun 5 charecters",
+            },
+          })}
+          error={errors.subject}
+          helperText={errors.subject ? errors.subject.message : ""}
+        />
+        <br />
+        <TextField
           id="message"
           name="message"
           label="Message"
           multiline
           fullWidth
+          required
           rows={6}
           {...register("message", {
             required: "This field can't be empty",
